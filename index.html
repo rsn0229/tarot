@@ -107,7 +107,6 @@
             display: block;
         }
 
-        /* 셔플 애니메이션 */
         .shuffling .card:nth-child(1) { transform: translateX(120px) rotate(-10deg); z-index: 3; }
         .shuffling .card:nth-child(2) { transform: translateX(0) rotate(5deg); z-index: 2; }
         .shuffling .card:nth-child(3) { transform: translateX(-120px) rotate(-15deg); z-index: 1; }
@@ -203,7 +202,7 @@
         <span id="card-twist" class="twist">트위스트...</span>
         
         <button class="twitter-share-btn" onclick="shareTwitter()">트위터에 결과 공유하기</button>
-        <button class="close-btn" onclick="closeAndShuffle()">운명 받아들이기 ✨</button>
+        <button class="close-btn" onclick="closeAndShuffle()">다른 카드 살펴보기 ✨</button>
     </div>
 
     <script>
@@ -241,7 +240,7 @@
         };
 
         function fetchVisitorCount() {
-            fetch('https://api.counterapi.dev/v1/sardina_destiny/tarot_event/up')
+            fetch('https://api.counterapi.dev/v1/sardina_destiny_v3/tarot_event/up')
                 .then(res => res.json())
                 .then(data => { document.getElementById('visitor-number').innerText = data.count; })
                 .catch(() => { document.getElementById('visitor-number').innerText = "특별한"; });
