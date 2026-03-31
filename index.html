@@ -34,11 +34,23 @@
         }
 
         p.subtitle {
-            margin-bottom: 40px;
+            margin-bottom: 15px; /* 카운터와의 간격을 위해 수정 */
             font-size: 0.95rem;
             opacity: 0.8;
             text-align: center;
             line-height: 1.4;
+        }
+
+        /* 🚀 방문자 카운터 스타일 */
+        .visitor-count {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            color: var(--gold);
+            margin-bottom: 30px;
+            opacity: 0.9;
         }
 
         .card-container {
@@ -162,6 +174,10 @@
 
     <h1>🔮 SARDINA DESTINY</h1>
     <p class="subtitle">사르디나의 바다가 당신의 운명을 비춥니다.<br>마음이 가는 카드를 선택하세요.</p>
+    
+    <div class="visitor-count">
+        당신은 <img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=sardina-destiny.com&count_bg=%23001a33&title_bg=%23d4af37&icon=&icon_color=%23E7E7E7&title=운명&edge_flat=true" alt="Hits"/> 번째 방문자군요!
+    </div>
 
     <div class="card-container" id="deck">
         <div class="card" onclick="drawCard(this, 0)">
@@ -187,31 +203,16 @@
     </div>
 
     <script>
-        document.addEventListener('contextmenu', function(e) {
-            e.preventDefault(); 
-        });
-
-        document.addEventListener('selectstart', function(e) {
-            e.preventDefault(); 
-        });
-
-        document.addEventListener('dragstart', function(e) {
-            e.preventDefault(); 
-        });
-
+        document.addEventListener('contextmenu', function(e) { e.preventDefault(); });
+        document.addEventListener('selectstart', function(e) { e.preventDefault(); });
+        document.addEventListener('dragstart', function(e) { e.preventDefault(); });
         document.addEventListener('keydown', function(e) {
-            if (e.key === 'F12') {
-                e.preventDefault();
-            }
-            if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j')) {
-                e.preventDefault();
-            }
-            if (e.ctrlKey && (e.key === 'U' || e.key === 'u')) {
-                e.preventDefault();
-            }
+            if (e.key === 'F12') e.preventDefault();
+            if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j')) e.preventDefault();
+            if (e.ctrlKey && (e.key === 'U' || e.key === 'u')) e.preventDefault();
         });
 
-        const tarotData = [
+const tarotData = [
             { id: 0, title: "0. THE FOOL (광대)", desc: "새로운 시작과 얽매이지 않는 순수함을 상징합니다. 당신의 앞날에 생각지도 못한 즐거운 일탈이 기다리고 있군요!", twist: "예를 들면... 산더미 같은 서류를 내팽개치고 바닷가로 데이트를 나선 통령과 보좌관을 목격하는 일 말이죠." },
             { id: 1, title: "I. THE MAGICIAN (마법사)", desc: "무에서 유를 창조하는 의지와 능력입니다. 불가능해 보였던 일들이 당신의 눈앞에서 실현될 수 있습니다.", twist: "분 단위로 짜인 일정을 마법처럼 비워내고, 애송이와 오후 내내 티타임을 가지는 통령님을 보게 될 겁니다." },
             { id: 2, title: "II. THE HIGH PRIESTESS (여사제)", desc: "뛰어난 직관과 숨겨진 비밀을 의미합니다. 굳이 말하지 않아도 상황의 이면을 꿰뚫어 보게 될 징조입니다.", twist: "무심한 듯 보이는 통령의 시선 끝이 언제나 파란 머리의 보좌관을 향해 있다는 엄청난 비밀을 당신만 눈치채게 되겠군요." },
