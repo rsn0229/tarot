@@ -5,19 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sardina Destiny Tarot</title>
     
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://sardina-tarot.netlify.app/">
-    <meta property="og:title" content="🔮 Sardina Destiny Tarot">
-    <meta property="og:description" content="사르디나의 바다가 당신의 운명을 비춥니다. 마음이 가는 카드를 선택하세요.">
-    <meta property="og:image" content="https://sardina-tarot.netlify.app/assets/thumb.png">
-
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="🔮 Sardina Destiny Tarot">
-    <meta name="twitter:description" content="사르디나의 바다가 당신의 운명을 비춥니다. 마음이 가는 카드를 선택하세요.">
-    <meta name="twitter:image" content="https://sardina-tarot.netlify.app/assets/thumb.png">
-    
     <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet">
-
     <style>
         :root {
             --primary-bg: #001a33;
@@ -36,6 +24,8 @@
             min-height: 100vh;
             margin: 0;
             overflow-x: hidden;
+            -webkit-user-select: none; /* 드래그 방지 */
+            user-select: none;
         }
 
         h1 {
@@ -46,7 +36,7 @@
             text-align: center;
         }
 
-        p.subtitle {
+        .subtitle {
             margin-bottom: 15px;
             font-size: 0.95rem;
             opacity: 0.8;
@@ -59,15 +49,12 @@
             color: var(--gold);
             margin-bottom: 30px;
             opacity: 0.9;
-            text-align: center;
         }
 
         #visitor-number {
             font-weight: bold;
-            font-size: 1.1rem;
             text-decoration: underline;
             text-underline-offset: 4px;
-            padding: 0 4px;
         }
 
         .card-container {
@@ -89,6 +76,7 @@
 
         .card:hover { transform: translateY(-10px); }
         .card.is-flipped { transform: translateY(-10px) rotateY(180deg); }
+
         .card-face {
             position: absolute;
             width: 100%;
@@ -109,22 +97,20 @@
         }
 
         .card-front {
-            background-color: var(--white);
             transform: rotateY(180deg);
         }
 
         .front-img {
             width: 100%;
             height: 100%;
-            object-fit: cover; 
+            object-fit: cover;
             display: block;
-            pointer-events: none; 
-            background-color: var(--white); 
         }
 
-        .shuffling .card:nth-child(1) { transform: translateX(120px) rotate(-10deg) translateY(10px); z-index: 3; }
+        /* 셔플 애니메이션 */
+        .shuffling .card:nth-child(1) { transform: translateX(120px) rotate(-10deg); z-index: 3; }
         .shuffling .card:nth-child(2) { transform: translateX(0) rotate(5deg); z-index: 2; }
-        .shuffling .card:nth-child(3) { transform: translateX(-120px) rotate(-15deg) translateY(5px); z-index: 1; }
+        .shuffling .card:nth-child(3) { transform: translateX(-120px) rotate(-15deg); z-index: 1; }
 
         #result-modal {
             display: none;
@@ -143,71 +129,46 @@
             box-shadow: 0 0 50px rgba(0,0,0,0.8);
             animation: fadeIn 0.4s ease;
             text-align: center;
-            max-height: 90vh;
-            overflow-y: auto;
         }
 
         @keyframes fadeIn { from { opacity: 0; transform: translate(-50%, -45%); } to { opacity: 1; transform: translate(-50%, -50%); } }
 
         #result-img {
-            width: 100px; 
-            height: auto;
-            border-radius: 5px;
+            width: 100px; height: auto; border-radius: 5px; margin-bottom: 15px;
             border: 1px solid #ccc;
-            margin-bottom: 15px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-            background-color: var(--white);
         }
 
-        #result-modal h2 { color: #002b55; margin: 0 0 10px 0; font-size: 1.2rem; border-bottom: 1px solid var(--gold); padding-bottom: 10px; }
-        #result-modal p { line-height: 1.6; font-size: 0.95rem; margin-bottom: 5px; text-align: left;}
-        .twist { color: #2e6299; font-weight: bold; margin-top: 15px; display: block; text-align: left; }
-        
-        /* 💡 닫기 버튼 (운명 받아들이기) */
+        #result-modal h2 { color: #002b55; margin-bottom: 10px; border-bottom: 1px solid var(--gold); padding-bottom: 10px; }
+        #result-modal p { line-height: 1.6; font-size: 0.95rem; text-align: left; margin: 10px 0; }
+        .twist { color: #2e6299; font-weight: bold; display: block; text-align: left; }
+
         .close-btn {
-            background: var(--primary-bg);
-            color: var(--gold);
-            border: none;
-            padding: 12px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            width: 100%;
-            margin-top: 20px;
-            font-weight: bold;
-            font-family: 'Gowun Dodum', sans-serif;
-            font-size: 1rem;
-            transition: background 0.3s;
+            background: var(--primary-bg); color: var(--gold); border: none;
+            padding: 12px 20px; border-radius: 5px; cursor: pointer; width: 100%;
+            margin-top: 20px; font-weight: bold; font-family: inherit;
         }
-        .close-btn:hover { background: #002b55; }
 
-        /* 💡 트위터 공유 버튼 (아웃라인 스타일) */
-        .twitter-share-btn {
-            background: transparent;
-            color: var(--gold);
-            border: 1px solid var(--gold);
-            padding: 8px 15px;
-            border-radius: 20px;
-            cursor: pointer;
-            width: fit-content;
-            margin: 15px auto 0 auto;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: 'Gowun Dodum', sans-serif;
-            font-size: 0.85rem;
-            transition: all 0.3s ease;
-            text-decoration: none;
-        }
-        .twitter-share-btn:hover { 
-            background: rgba(212, 175, 55, 0.1); 
-            transform: translateY(-2px);
-        }
+.twitter-share-btn {
+    background: transparent;
+    color: var(--gold);
+    border: 1px solid var(--gold);
+    padding: 8px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    width: fit-content;
+    margin: 15px auto 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Gowun Dodum', sans-serif; 
+    font-size: 0.85rem;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
 
         @media (max-width: 400px) {
             .card-container { gap: 10px; }
             .card { width: 85px; height: 140px; }
-            .shuffling .card:nth-child(1) { transform: translateX(95px) rotate(-10deg); }
-            .shuffling .card:nth-child(3) { transform: translateX(-95px) rotate(-15deg); }
         }
     </style>
 </head>
@@ -221,48 +182,37 @@
     </div>
 
     <div class="card-container" id="deck">
-        <div class="card" onclick="drawCard(this, 0)">
+        <div class="card" onclick="drawCard(this)">
             <div class="card-face card-back"></div>
             <div class="card-face card-front"><img class="front-img" src="" alt="Card"></div>
         </div>
-        <div class="card" onclick="drawCard(this, 1)">
+        <div class="card" onclick="drawCard(this)">
             <div class="card-face card-back"></div>
             <div class="card-face card-front"><img class="front-img" src="" alt="Card"></div>
         </div>
-        <div class="card" onclick="drawCard(this, 2)">
+        <div class="card" onclick="drawCard(this)">
             <div class="card-face card-back"></div>
             <div class="card-face card-front"><img class="front-img" src="" alt="Card"></div>
         </div>
     </div>
 
     <div id="result-modal">
-        <img id="result-img" src="" alt="Tarot Card" onerror="this.style.display='none'">
+        <img id="result-img" src="" alt="Tarot Card">
         <h2 id="card-title">카드 이름</h2>
-        <p id="card-desc">기본 리딩 내용...</p>
-        <span id="card-twist" class="twist">만우절 트위스트...</span>
+        <p id="card-desc">내용...</p>
+        <span id="card-twist" class="twist">트위스트...</span>
         
-        <button class="twitter-share-btn" onclick="shareTwitter()">
-            트위터에 결과 공유하기
-        </button>
-        
+        <button class="twitter-share-btn" onclick="shareTwitter()">트위터에 결과 공유하기</button>
         <button class="close-btn" onclick="closeAndShuffle()">운명 받아들이기 ✨</button>
     </div>
 
     <script>
-        document.addEventListener('contextmenu', function(e) { e.preventDefault(); });
-        document.addEventListener('selectstart', function(e) { e.preventDefault(); });
-        document.addEventListener('dragstart', function(e) { e.preventDefault(); });
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'F12') e.preventDefault();
-            if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j')) e.preventDefault();
-            if (e.ctrlKey && (e.key === 'U' || e.key === 'u')) e.preventDefault();
-        });
-
+        // 기초 데이터
         const tarotData = [
             { id: 0, title: "0. THE FOOL (광대)", desc: "새로운 시작과 얽매이지 않는 순수함을 상징합니다. 당신의 앞날에 생각지도 못한 즐거운 일탈이 기다리고 있군요!", twist: "예를 들면... 산더미 같은 서류를 뒤로 하고 바닷가로 데이트를 나선 닻과 파도를 목격하는 일 말이죠." },
             { id: 1, title: "I. THE MAGICIAN (마법사)", desc: "무에서 유를 창조하는 의지와 능력입니다. 불가능해 보였던 일들이 당신의 눈앞에서 실현될 수 있습니다.", twist: "분 단위로 짜인 일정을 마법처럼 비워내고, 애송이와 여유로운 티타임을 가지는 닻을 보게 될 겁니다." },
             { id: 2, title: "II. THE HIGH PRIESTESS (여사제)", desc: "뛰어난 직관과 숨겨진 비밀을 의미합니다. 굳이 말하지 않아도 상황의 이면을 꿰뚫어 보게 될 징조입니다.", twist: "무심한 듯 보이는 닻의 시선 끝이 언제나 파란 머리의 보좌관을 향해 있다는 비밀을 당신만 눈치채게 되겠군요." },
-            { id: 3, title: "III. THE EMPRESS (여황제)", desc: "풍요와 헌신적인 사랑, 포용력을 뜻합니다. 누군가의 따뜻한 보살핌을 받거나, 평화로운 하루를 보냅니다.", twist: "사르디나의 공기가 유독 포근하네요. 나란히 걸어가는 두 사람의 달콤한 기류를 보며 흐뭇하게 웃을지도 모르죠." },
+            { id: 3, title: "III. THE EMPRESS (여황제)", desc: "풍요와 헌신적인 사랑, 포용력을 뜻합니다. 누군가의 따뜻한 보살핌을 받거나, 평화로운 하루를 보냅니다.", twist: "사르디나의 공기가 유독 포근하네요. 나란히 걸어가는 두 사람의 달콤한 기류를 보며 흐뭇한 웃음이 나옵니다." },
             { id: 4, title: "IV. THE EMPEROR (황제)", desc: "견고한 권위와 책임감, 흔들리지 않는 기반을 의미합니다. 리더십을 발휘하여 상황을 통제하게 됩니다.", twist: "'오늘은 내 곁에만 머물도록 해. 이건 명령이다.' 라며 사심 가득한 권력을 남용하는 닻을 직관하게 됩니다." },
             { id: 5, title: "V. THE HIEROPHANT (교황)", desc: "전통과 규칙, 그리고 구성원들 간의 암묵적인 동의를 상징합니다. 조언을 구하거나 규칙을 따르는 것이 좋습니다.", twist: "의회당의 암묵적 규칙: '두 사람이 단둘이 있을 땐 집무실 문을 두드리지 말 것.' 오늘 당신은 이 규칙을 뼈저리게 새깁니다." },
             { id: 6, title: "VI. THE LOVERS (연인)", desc: "조화와 결합, 그리고 완벽한 소통을 의미합니다. 오늘은 주변 사람들과 아주 깊고 따뜻한 관계를 맺게 될 운명입니다.", twist: "의회당 뒷편 정원에서 닻과 파도의 애정 어린 시간을 목격하겠군요. 눈치껏 자리를 비켜주는 것이 예의입니다." },
@@ -283,23 +233,26 @@
             { id: 21, title: "XXI. THE WORLD (세계)", desc: "완성과 통합, 그리고 하나의 주기가 성공적으로 끝남을 의미합니다. 더할 나위 없이 완벽한 상태입니다.", twist: "변치 않고 자리를 지키는 닻과 끊임없이 밀려와 스며드는 파도. 두 사람의 완벽한 세계가 완성되었습니다." }
         ];
 
-        let canDraw = false; 
-        let currentCardIds = [];
+        let canDraw = false;
 
         window.onload = () => {
             shuffleAndDeal();
-            fetchVisitorCount(); 
+            fetchVisitorCount();
         };
 
         function fetchVisitorCount() {
             fetch('https://api.counterapi.dev/v1/sardina_destiny/tarot_event/up')
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById('visitor-number').innerText = data.count;
-                })
-                .catch(error => {
-                    document.getElementById('visitor-number').innerText = "특별한";
-                });
+                .then(res => res.json())
+                .then(data => { document.getElementById('visitor-number').innerText = data.count; })
+                .catch(() => { document.getElementById('visitor-number').innerText = "특별한"; });
+        }
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
         }
 
         function shuffleAndDeal() {
@@ -311,36 +264,36 @@
             cards.forEach(card => card.classList.remove('is-flipped'));
 
             setTimeout(() => {
-                let allCards = Array.from({length: 22}, (_, i) => i);
-                allCards.sort(() => Math.random() - 0.5);
-                
-                currentCardIds = allCards.slice(0, 3);
 
-                const frontImages = document.querySelectorAll('.front-img');
-                frontImages.forEach((img, index) => {
-                    img.src = `assets/${currentCardIds[index]}.jpg`;
+                let allIds = Array.from({length: 22}, (_, i) => i);
+                shuffleArray(allIds);
+                
+                const selectedIds = allIds.slice(0, 3);
+
+                cards.forEach((card, index) => {
+                    const cardId = selectedIds[index];
+                    const img = card.querySelector('.front-img');
+
+                    card.dataset.cardId = cardId;
+                    img.src = `assets/${cardId}.jpg`;
                 });
 
                 deck.classList.remove('shuffling');
-                
-                setTimeout(() => { canDraw = true; }, 500); 
+                setTimeout(() => { canDraw = true; }, 500);
             }, 600);
         }
 
-        function drawCard(cardElement, slotIndex) {
+        function drawCard(cardElement) {
             if (!canDraw || cardElement.classList.contains('is-flipped')) return;
             canDraw = false;
 
             cardElement.classList.add('is-flipped');
 
-            const realCardId = currentCardIds[slotIndex];
-            const result = tarotData.find(data => data.id === realCardId);
+            const realCardId = parseInt(cardElement.dataset.cardId);
+            const result = tarotData.find(d => d.id === realCardId);
 
             setTimeout(() => {
-                const imgElement = document.getElementById('result-img');
-                imgElement.src = `assets/${realCardId}.jpg`;
-                imgElement.style.display = 'inline-block';
-                
+                document.getElementById('result-img').src = `assets/${realCardId}.jpg`;
                 document.getElementById('card-title').innerText = result.title;
                 document.getElementById('card-desc').innerText = result.desc;
                 document.getElementById('card-twist').innerText = result.twist;
@@ -355,10 +308,13 @@
 
         function shareTwitter() {
             const cardTitle = document.getElementById('card-title').innerText;
-            const text = `${cardTitle}을 뽑았습니다! 나의 운명도 확인해 보세요🔮\nhttps://tarot.sardina.love`;
+            const text = `${cardTitle}을 뽑았습니다! 사르디나의 바다가 비춘 나의 운명도 확인해볼까요? 🔮\nhttps://sardina-tarot.netlify.app/`;
             const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
             window.open(url, '_blank');
         }
+
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        document.addEventListener('selectstart', e => e.preventDefault());
     </script>
 </body>
 </html>
