@@ -17,8 +17,6 @@
     <meta name="twitter:image" content="https://sardina-tarot.netlify.app/assets/thumb.png">
     
     <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet">
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
     <style>
         :root {
@@ -165,28 +163,7 @@
         #result-modal p { line-height: 1.6; font-size: 0.95rem; margin-bottom: 5px; text-align: left;}
         .twist { color: #2e6299; font-weight: bold; margin-top: 15px; display: block; text-align: left; }
         
-        /* 💡 추가된 버튼 스타일 */
-        .action-buttons {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-        }
-
-        .action-btn {
-            flex: 1;
-            background: var(--gold);
-            color: var(--primary-bg);
-            border: none;
-            padding: 10px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-            font-family: 'Gowun Dodum', sans-serif;
-            font-size: 0.9rem;
-            transition: background 0.3s;
-        }
-        .action-btn:hover { background: #b8962e; }
-
+        /* 💡 닫기 버튼 (운명 받아들이기) */
         .close-btn {
             background: var(--primary-bg);
             color: var(--gold);
@@ -195,13 +172,36 @@
             border-radius: 5px;
             cursor: pointer;
             width: 100%;
-            margin-top: 10px;
+            margin-top: 20px;
             font-weight: bold;
             font-family: 'Gowun Dodum', sans-serif;
             font-size: 1rem;
             transition: background 0.3s;
         }
         .close-btn:hover { background: #002b55; }
+
+        /* 💡 트위터 공유 버튼 (아웃라인 스타일) */
+        .twitter-share-btn {
+            background: transparent;
+            color: var(--gold);
+            border: 1px solid var(--gold);
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            width: fit-content;
+            margin: 15px auto 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Gowun Dodum', sans-serif;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+        .twitter-share-btn:hover { 
+            background: rgba(212, 175, 55, 0.1); 
+            transform: translateY(-2px);
+        }
 
         @media (max-width: 400px) {
             .card-container { gap: 10px; }
@@ -241,13 +241,11 @@
         <p id="card-desc">기본 리딩 내용...</p>
         <span id="card-twist" class="twist">만우절 트위스트...</span>
         
-        <div data-html2canvas-ignore="true">
-            <div class="action-buttons">
-                <button class="action-btn" onclick="downloadResult()">이미지 저장 💾</button>
-                <button class="action-btn" onclick="shareTwitter()">트위터 공유 🐦</button>
-            </div>
-            <button class="close-btn" onclick="closeAndShuffle()">운명 받아들이기 ✨</button>
-        </div>
+        <button class="twitter-share-btn" onclick="shareTwitter()">
+            트위터에 결과 공유하기
+        </button>
+        
+        <button class="close-btn" onclick="closeAndShuffle()">운명 받아들이기 ✨</button>
     </div>
 
     <script>
@@ -261,11 +259,11 @@
         });
 
         const tarotData = [
-            { id: 0, title: "0. THE FOOL (광대)", desc: "새로운 시작과 얽매이지 않는 순수함을 상징합니다. 당신의 앞날에 생각지도 못한 즐거운 일탈이 기다리고 있군요!", twist: "예를 들면... 산더미 같은 서류를 내팽개치고 바닷가로 데이트를 나선 닻과 파도를 목격하는 일 말이죠." },
-            { id: 1, title: "I. THE MAGICIAN (마법사)", desc: "무에서 유를 창조하는 의지와 능력입니다. 불가능해 보였던 일들이 당신의 눈앞에서 실현될 수 있습니다.", twist: "분 단위로 짜인 일정을 마법처럼 비워내고, 애송이와 오후 내내 티타임을 가지는 닻을 보게 될 겁니다." },
+            { id: 0, title: "0. THE FOOL (광대)", desc: "새로운 시작과 얽매이지 않는 순수함을 상징합니다. 당신의 앞날에 생각지도 못한 즐거운 일탈이 기다리고 있군요!", twist: "예를 들면... 산더미 같은 서류를 뒤로 하고 바닷가로 데이트를 나선 닻과 파도를 목격하는 일 말이죠." },
+            { id: 1, title: "I. THE MAGICIAN (마법사)", desc: "무에서 유를 창조하는 의지와 능력입니다. 불가능해 보였던 일들이 당신의 눈앞에서 실현될 수 있습니다.", twist: "분 단위로 짜인 일정을 마법처럼 비워내고, 애송이와 여유로운 티타임을 가지는 닻을 보게 될 겁니다." },
             { id: 2, title: "II. THE HIGH PRIESTESS (여사제)", desc: "뛰어난 직관과 숨겨진 비밀을 의미합니다. 굳이 말하지 않아도 상황의 이면을 꿰뚫어 보게 될 징조입니다.", twist: "무심한 듯 보이는 닻의 시선 끝이 언제나 파란 머리의 보좌관을 향해 있다는 비밀을 당신만 눈치채게 되겠군요." },
-            { id: 3, title: "III. THE EMPRESS (여황제)", desc: "풍요와 헌신적인 사랑, 포용력을 뜻합니다. 누군가의 따뜻한 보살핌을 받거나, 평화로운 하루를 보냅니다.", twist: "사르디나의 공기가 유독 평화롭네요. 나란히 걸어가는 두 사람의 달콤한 기류를 보며 흐뭇하게 웃을지도 모르죠." },
-            { id: 4, title: "IV. THE EMPEROR (황제)", desc: "견고한 권위와 책임감, 흔들리지 않는 기반을 의미합니다. 리더십을 발휘하여 상황을 통제하게 됩니다.", twist: "'오늘은 내 곁에만 머물도록 해. 명령이다.' 라며 사심 가득한 권력을 남용하는 닻을 직관하게 됩니다." },
+            { id: 3, title: "III. THE EMPRESS (여황제)", desc: "풍요와 헌신적인 사랑, 포용력을 뜻합니다. 누군가의 따뜻한 보살핌을 받거나, 평화로운 하루를 보냅니다.", twist: "사르디나의 공기가 유독 포근하네요. 나란히 걸어가는 두 사람의 달콤한 기류를 보며 흐뭇하게 웃을지도 모르죠." },
+            { id: 4, title: "IV. THE EMPEROR (황제)", desc: "견고한 권위와 책임감, 흔들리지 않는 기반을 의미합니다. 리더십을 발휘하여 상황을 통제하게 됩니다.", twist: "'오늘은 내 곁에만 머물도록 해. 이건 명령이다.' 라며 사심 가득한 권력을 남용하는 닻을 직관하게 됩니다." },
             { id: 5, title: "V. THE HIEROPHANT (교황)", desc: "전통과 규칙, 그리고 구성원들 간의 암묵적인 동의를 상징합니다. 조언을 구하거나 규칙을 따르는 것이 좋습니다.", twist: "의회당의 암묵적 규칙: '두 사람이 단둘이 있을 땐 집무실 문을 두드리지 말 것.' 오늘 당신은 이 규칙을 뼈저리게 새깁니다." },
             { id: 6, title: "VI. THE LOVERS (연인)", desc: "조화와 결합, 그리고 완벽한 소통을 의미합니다. 오늘은 주변 사람들과 아주 깊고 따뜻한 관계를 맺게 될 운명입니다.", twist: "의회당 뒷편 정원에서 닻과 파도의 애정 어린 시간을 목격하겠군요. 눈치껏 자리를 비켜주는 것이 예의입니다." },
             { id: 7, title: "VII. THE CHARIOT (전차)", desc: "거침없는 추진력과 승리를 상징합니다. 목표를 향해 앞뒤 재지 않고 달려갈 때입니다.", twist: "술기운을 빌려 직진하는 파도의 엄청난 추진력을 목격합니다. 당황해 귀끝이 붉어진 닻은 덤이죠." },
@@ -279,7 +277,7 @@
             { id: 15, title: "XV. THE DEVIL (악마)", desc: "끊을 수 없는 유혹과 강렬한 집착을 상징합니다. 이성으로는 안 된다는 걸 알면서도 끌리게 됩니다.", twist: "'집무실에서는 안 된다고 했을 텐데.' 타박하면서도, 기꺼이 안겨오는 파도를 마주 끌어안고야 마는 닻입니다." },
             { id: 16, title: "XVI. THE TOWER (탑)", desc: "갑작스러운 변화와 기존 가치관의 붕괴를 의미합니다. 예측하지 못한 충격이 찾아옵니다.", twist: "철두철미하던 닻의 마음이, 울망한 얼굴로 속삭이는 '로잔나...' 한 마디에 와르르 무너져 내리고야 맙니다." },
             { id: 17, title: "XVII. THE STAR (별)", desc: "희망과 치유, 그리고 영감을 상징합니다. 어두운 밤하늘을 밝히는 별처럼 긍정적인 에너지가 가득합니다.", twist: "저 멀리서부터 반짝이는 건 서로의 손에 끼워진 반지로군요! 닻과 파도의 앞날이 저 별처럼 눈부십니다." },
-            { id: 18, title: "XVIII. THE MOON (달)", desc: "불안과 환상, 숨겨진 두려움을 뜻합니다. 어둠 속에서 진실이 모호하게 보일 수 있습니다.", twist: "악몽에 뒤척이는 파도의 곁을 조용히 지키며, 이불을 덮어주는 닻의 은근한 다정함을 우연히 목격하고 맙니다." },
+            { id: 18, title: "XVIII. THE MOON (달)", desc: "불안과 환상, 숨겨진 두려움을 뜻합니다. 어둠 속에서 진실이 모호하게 보일 수 있습니다.", twist: "악몽에 뒤척이는 파도의 곁을 조용히 지키며, 이불을 덮어주는 닻의 은밀한 다정함을 우연히 목격하고 맙니다." },
             { id: 19, title: "XIX. THE SUN (태양)", desc: "밝은 에너지, 기쁨, 그리고 완벽한 성공을 의미합니다. 그늘 없이 모든 것이 환하게 빛나는 하루입니다.", twist: "해사하게 웃는 파도의 얼굴이 사르디나의 태양보다 밝습니다. 그를 마주하는 닻의 미소는 모든 것을 거머쥔 승리자 같군요." },
             { id: 20, title: "XX. JUDGEMENT (심판)", desc: "부름과 각성, 그리고 부활을 상징합니다. 과거의 짐을 벗어던지고 새로운 단계로 나아갑니다.", twist: "반려를 맞이한 사르디나의 종신 통령이 새로운 내일을 선포합니다. (그리고 오늘은 국경일로 지정됩니다.)" },
             { id: 21, title: "XXI. THE WORLD (세계)", desc: "완성과 통합, 그리고 하나의 주기가 성공적으로 끝남을 의미합니다. 더할 나위 없이 완벽한 상태입니다.", twist: "변치 않고 자리를 지키는 닻과 끊임없이 밀려와 스며드는 파도. 두 사람의 완벽한 세계가 완성되었습니다." }
@@ -355,31 +353,11 @@
             shuffleAndDeal();
         }
 
-        // 🚀 트위터 공유 기능
         function shareTwitter() {
             const cardTitle = document.getElementById('card-title').innerText;
-            // 오너님이 지정해주신 문구 포맷 적용
             const text = `${cardTitle}을 뽑았습니다! 나의 운명도 확인해 보세요🔮\nhttps://tarot.sardina.love`;
-            // 트위터 창 열기
             const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
             window.open(url, '_blank');
-        }
-
-        // 💾 이미지 다운로드 기능 (html2canvas)
-        function downloadResult() {
-            const modal = document.getElementById('result-modal');
-            
-            // 모달창을 캡처해서 이미지로 만듭니다
-            html2canvas(modal, {
-                backgroundColor: "#f8f9fa", // 배경색을 흰색 계열로 깔끔하게 고정
-                scale: 2, // 화질을 2배로 올려 선명하게 저장
-                useCORS: true // 이미지가 깨지지 않도록 권한 허용
-            }).then(canvas => {
-                const link = document.createElement('a');
-                link.download = 'sardina_destiny.png'; // 저장될 파일 이름
-                link.href = canvas.toDataURL('image/png');
-                link.click();
-            });
         }
     </script>
 </body>
