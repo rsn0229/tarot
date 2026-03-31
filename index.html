@@ -34,23 +34,28 @@
         }
 
         p.subtitle {
-            margin-bottom: 15px; /* 카운터와의 간격을 위해 수정 */
+            margin-bottom: 15px;
             font-size: 0.95rem;
             opacity: 0.8;
             text-align: center;
             line-height: 1.4;
         }
 
-        /* 🚀 방문자 카운터 스타일 */
+        /* 🚀 텍스트형 방문자 카운터 스타일 */
         .visitor-count {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             color: var(--gold);
             margin-bottom: 30px;
             opacity: 0.9;
+            text-align: center;
+        }
+
+        #visitor-number {
+            font-weight: bold;
+            font-size: 1.1rem;
+            text-decoration: underline;
+            text-underline-offset: 4px;
+            padding: 0 4px;
         }
 
         .card-container {
@@ -175,8 +180,8 @@
     <h1>🔮 SARDINA DESTINY</h1>
     <p class="subtitle">사르디나의 바다가 당신의 운명을 비춥니다.<br>마음이 가는 카드를 선택하세요.</p>
     
-<div class="visitor-count">
-        당신은 <img src="https://api.visitorbadge.io/api/visitors?path=sardina-destiny-tarot-event&label=운명&labelColor=%23001a33&countColor=%23d4af37" alt="Hits"/> 번째 방문자군요!
+    <div class="visitor-count">
+        당신은 운명의 <span id="visitor-number">...</span> 번째 방문자군요!
     </div>
 
     <div class="card-container" id="deck">
@@ -242,7 +247,22 @@ const tarotData = [
 
         window.onload = () => {
             shuffleAndDeal();
+            fetchVisitorCount(); // 화면이 열릴 때 카운터 데이터 요청
         };
+
+        // 🚀 순수 숫자만 가져오는 API 함수 추가
+        function fetchVisitorCount() {
+            // 'sardina_destiny' 라는 공간의 'tarot_event' 라는 이름표의 숫자를 1 올리고 가져옵니다.
+            fetch('https://api.counterapi.dev/v1/sardina_destiny/tarot_event/up')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('visitor-number').innerText = data.count;
+                })
+                .catch(error => {
+                    // 인터넷 환경 등으로 에러 발생 시 예비 텍스트
+                    document.getElementById('visitor-number').innerText = "특별한";
+                });
+        }
 
         function shuffleAndDeal() {
             canDraw = false;
