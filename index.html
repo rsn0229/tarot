@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sardina Destiny</title>
+    <title>Sardina Destiny Tarot</title>
+    
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://sardina-tarot.netlify.app/">
     <meta property="og:title" content="🔮 Sardina Destiny Tarot">
@@ -16,6 +17,9 @@
     <meta name="twitter:image" content="https://sardina-tarot.netlify.app/assets/thumb.png">
     
     <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
     <style>
         :root {
             --primary-bg: #001a33;
@@ -161,6 +165,28 @@
         #result-modal p { line-height: 1.6; font-size: 0.95rem; margin-bottom: 5px; text-align: left;}
         .twist { color: #2e6299; font-weight: bold; margin-top: 15px; display: block; text-align: left; }
         
+        /* 💡 추가된 버튼 스타일 */
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .action-btn {
+            flex: 1;
+            background: var(--gold);
+            color: var(--primary-bg);
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            font-family: 'Gowun Dodum', sans-serif;
+            font-size: 0.9rem;
+            transition: background 0.3s;
+        }
+        .action-btn:hover { background: #b8962e; }
+
         .close-btn {
             background: var(--primary-bg);
             color: var(--gold);
@@ -169,7 +195,7 @@
             border-radius: 5px;
             cursor: pointer;
             width: 100%;
-            margin-top: 20px;
+            margin-top: 10px;
             font-weight: bold;
             font-family: 'Gowun Dodum', sans-serif;
             font-size: 1rem;
@@ -214,7 +240,14 @@
         <h2 id="card-title">카드 이름</h2>
         <p id="card-desc">기본 리딩 내용...</p>
         <span id="card-twist" class="twist">만우절 트위스트...</span>
-        <button class="close-btn" onclick="closeAndShuffle()">운명 받아들이기 ✨</button>
+        
+        <div data-html2canvas-ignore="true">
+            <div class="action-buttons">
+                <button class="action-btn" onclick="downloadResult()">이미지 저장 💾</button>
+                <button class="action-btn" onclick="shareTwitter()">트위터 공유 🐦</button>
+            </div>
+            <button class="close-btn" onclick="closeAndShuffle()">운명 받아들이기 ✨</button>
+        </div>
     </div>
 
     <script>
@@ -227,7 +260,7 @@
             if (e.ctrlKey && (e.key === 'U' || e.key === 'u')) e.preventDefault();
         });
 
-const tarotData = [
+        const tarotData = [
             { id: 0, title: "0. THE FOOL (광대)", desc: "새로운 시작과 얽매이지 않는 순수함을 상징합니다. 당신의 앞날에 생각지도 못한 즐거운 일탈이 기다리고 있군요!", twist: "예를 들면... 산더미 같은 서류를 내팽개치고 바닷가로 데이트를 나선 닻과 파도를 목격하는 일 말이죠." },
             { id: 1, title: "I. THE MAGICIAN (마법사)", desc: "무에서 유를 창조하는 의지와 능력입니다. 불가능해 보였던 일들이 당신의 눈앞에서 실현될 수 있습니다.", twist: "분 단위로 짜인 일정을 마법처럼 비워내고, 애송이와 오후 내내 티타임을 가지는 닻을 보게 될 겁니다." },
             { id: 2, title: "II. THE HIGH PRIESTESS (여사제)", desc: "뛰어난 직관과 숨겨진 비밀을 의미합니다. 굳이 말하지 않아도 상황의 이면을 꿰뚫어 보게 될 징조입니다.", twist: "무심한 듯 보이는 닻의 시선 끝이 언제나 파란 머리의 보좌관을 향해 있다는 엄청난 비밀을 당신만 눈치채게 되겠군요." },
@@ -246,7 +279,7 @@ const tarotData = [
             { id: 15, title: "XV. THE DEVIL (악마)", desc: "끊을 수 없는 유혹과 강렬한 집착을 상징합니다. 이성으로는 안 된다는 걸 알면서도 끌리게 됩니다.", twist: "'집무실에서는 안 된다고 했을 텐데.' 타박하면서도, 기꺼이 안겨오는 파도를 마주 끌어안고야 마는 닻입니다." },
             { id: 16, title: "XVI. THE TOWER (탑)", desc: "갑작스러운 변화와 기존 가치관의 붕괴를 의미합니다. 예측하지 못한 충격이 찾아옵니다.", twist: "철두철미하던 닻의 마음이, 울망한 얼굴로 속삭이는 '로잔나...' 한 마디에 와르르 무너져 내리고야 맙니다." },
             { id: 17, title: "XVII. THE STAR (별)", desc: "희망과 치유, 그리고 영감을 상징합니다. 어두운 밤하늘을 밝히는 별처럼 긍정적인 에너지가 가득합니다.", twist: "저 멀리서부터 반짝이는 건 서로의 손에 끼워진 반지로군요! 닻과 파도의 앞날이 저 별처럼 눈부십니다." },
-            { id: 18, title: "XVIII. THE MOON (달)", desc: "불안과 환상, 숨겨진 두려움을 뜻합니다. 어둠 속에서 진실이 모호하게 보일 수 있습니다.", twist: "악몽에 뒤척이는 파도의 곁을 조용히 지키며, 이불을 덮어주는 닻의 은밀한 다정함을 우연히 목격하고 맙니다." },
+            { id: 18, title: "XVIII. THE MOON (달)", desc: "불안과 환상, 숨겨진 두려움을 뜻합니다. 어둠 속에서 진실이 모호하게 보일 수 있습니다.", twist: "악몽에 뒤척이는 파도의 곁을 조용히 지키며, 이불을 덮어주는 닻의 은근한 다정함을 우연히 목격하고 맙니다." },
             { id: 19, title: "XIX. THE SUN (태양)", desc: "밝은 에너지, 기쁨, 그리고 완벽한 성공을 의미합니다. 그늘 없이 모든 것이 환하게 빛나는 하루입니다.", twist: "해사하게 웃는 파도의 얼굴이 사르디나의 태양보다 밝습니다. 그를 마주하는 닻의 미소는 모든 것을 거머쥔 승리자 같군요." },
             { id: 20, title: "XX. JUDGEMENT (심판)", desc: "부름과 각성, 그리고 부활을 상징합니다. 과거의 짐을 벗어던지고 새로운 단계로 나아갑니다.", twist: "반려를 맞이한 사르디나의 종신 통령이 새로운 내일을 선포합니다. (그리고 오늘은 국경일로 지정됩니다.)" },
             { id: 21, title: "XXI. THE WORLD (세계)", desc: "완성과 통합, 그리고 하나의 주기가 성공적으로 끝남을 의미합니다. 더할 나위 없이 완벽한 상태입니다.", twist: "변치 않고 자리를 지키는 닻과 끊임없이 밀려와 안아주는 파도. 두 사람의 완벽한 세계가 완성되었습니다." }
@@ -257,19 +290,16 @@ const tarotData = [
 
         window.onload = () => {
             shuffleAndDeal();
-            fetchVisitorCount(); // 화면이 열릴 때 카운터 데이터 요청
+            fetchVisitorCount(); 
         };
 
-        // 🚀 순수 숫자만 가져오는 API 함수 추가
         function fetchVisitorCount() {
-            // 'sardina_destiny' 라는 공간의 'tarot_event' 라는 이름표의 숫자를 1 올리고 가져옵니다.
             fetch('https://api.counterapi.dev/v1/sardina_destiny/tarot_event/up')
                 .then(response => response.json())
                 .then(data => {
                     document.getElementById('visitor-number').innerText = data.count;
                 })
                 .catch(error => {
-                    // 인터넷 환경 등으로 에러 발생 시 예비 텍스트
                     document.getElementById('visitor-number').innerText = "특별한";
                 });
         }
@@ -323,6 +353,33 @@ const tarotData = [
         function closeAndShuffle() {
             document.getElementById('result-modal').style.display = 'none';
             shuffleAndDeal();
+        }
+
+        // 🚀 트위터 공유 기능
+        function shareTwitter() {
+            const cardTitle = document.getElementById('card-title').innerText;
+            // 오너님이 지정해주신 문구 포맷 적용
+            const text = `${cardTitle}을 뽑았습니다! 나의 운명도 확인해 보세요🔮\nhttps://tarot.sardina.love`;
+            // 트위터 창 열기
+            const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
+            window.open(url, '_blank');
+        }
+
+        // 💾 이미지 다운로드 기능 (html2canvas)
+        function downloadResult() {
+            const modal = document.getElementById('result-modal');
+            
+            // 모달창을 캡처해서 이미지로 만듭니다
+            html2canvas(modal, {
+                backgroundColor: "#f8f9fa", // 배경색을 흰색 계열로 깔끔하게 고정
+                scale: 2, // 화질을 2배로 올려 선명하게 저장
+                useCORS: true // 이미지가 깨지지 않도록 권한 허용
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = 'sardina_destiny.png'; // 저장될 파일 이름
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            });
         }
     </script>
 </body>
