@@ -18,6 +18,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Corinthia:wght@700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
     <style>
         @font-face {
@@ -664,21 +665,42 @@
 
         @keyframes spin { 100% { transform: rotate(360deg); } }
 
-        .close-btn {
-            background: var(--primary-bg);
-            color: var(--gold);
-            border: none;
-            padding: 12px 20px;
+        .modal-btn-group {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: nowrap;
+            gap: 10px;
+            margin-top: 18px;
+            width: 100%;
+        }
+
+        .action-btn {
+            flex: 1;
+            min-width: 0;
+            padding: 12px 8px;
             border-radius: 6px;
             cursor: pointer;
-            width: 100%;
-            margin-top: 18px;
             font-weight: bold;
             font-family: 'KyoboHandwriting2020ParkDoYeon', sans-serif;
-            font-size: 1.1rem;
-            transition: background 0.3s;
+            font-size: clamp(0.95rem, 3.5vw, 1.1rem);
+            transition: all 0.3s;
+            white-space: nowrap;
+            text-align: center;
         }
-        .close-btn:hover { background: #002b55; }
+
+        .save-btn {
+            background: #e9e4d8;
+            color: #002b55;
+            border: 1px solid #cbbba0;
+        }
+        .save-btn:hover { background: #dcd5c5; }
+
+        .return-btn {
+            background: #e9e4d8;
+            color: #002b55;
+            border: 1px solid #cbbba0;
+        }
+        .return-btn:hover { background: #dcd5c5; }
 
         .twitter-share-btn {
             background: transparent;
@@ -828,7 +850,10 @@
             트위터에 결과 공유하기
         </button>
         
-        <button class="close-btn" onclick="closeAndShuffle()">조언 새겨듣기 ✨</button>
+        <div class="modal-btn-group" id="modal-btn-group">
+            <button class="action-btn save-btn" id="save-advice-btn" onclick="saveAdviceImage()">조언 새겨듣기(저장)</button>
+            <button class="action-btn return-btn" onclick="closeAndShuffle()">돌아가기</button>
+        </div>
     </div>
 
     <div class="notice-backdrop" id="notice-backdrop" onclick="closeNoticeModal()"></div>
@@ -1301,8 +1326,62 @@
         }
 
         function closeAndShuffle() {
+            const worryInput = document.getElementById('worry-input');
+            if (worryInput) worryInput.value = '';
+
             closeResultModalOnly();
             shuffleAndSpread();
+        }
+
+        async function saveAdviceImage() {
+            const modal = document.getElementById('result-modal');
+            const saveBtn = document.getElementById('save-advice-btn');
+            if (!modal) return;
+
+            const originalText = saveBtn.innerText;
+            saveBtn.innerText = '바다의 기록을 담는 중...';
+            saveBtn.disabled = true;
+
+            try {
+                const canvas = await html2canvas(modal, {
+                    backgroundColor: '#fdfbf7',
+                    scale: 2,
+                    useCORS: true,
+                    onclone: (clonedDoc) => {
+                        const clonedModal = clonedDoc.getElementById('result-modal');
+                        if (clonedModal) {
+                            clonedModal.style.position = 'static';
+                            clonedModal.style.transform = 'none';
+                            clonedModal.style.maxHeight = 'none';
+                            clonedModal.style.height = 'auto';
+                            clonedModal.style.overflow = 'visible';
+                            clonedModal.style.boxShadow = 'none';
+                            clonedModal.style.margin = '0';
+                        }
+                        const tBtn = clonedDoc.getElementById('twitter-btn');
+                        const bGroup = clonedDoc.getElementById('modal-btn-group');
+                        if (tBtn) tBtn.style.display = 'none';
+                        if (bGroup) bGroup.style.display = 'none';
+                    }
+                });
+
+                const link = document.createElement('a');
+                const timestamp = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+                link.download = `sardina_tarot_${timestamp}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            } catch (err) {
+                console.error('이미지 저장 오류:', err);
+                showNoticeModal({
+                    icon: '⚓',
+                    title: '기록을 남기지 못했구나',
+                    message: '저장하는 중에 작은 파도가 일었어.\n잠시 후 다시 시도해보렴.',
+                    btnText: '확인'
+                });
+            } finally {
+                saveBtn.innerText = originalText;
+                saveBtn.disabled = false;
+            }
         }
 
         function shareTwitter() {
