@@ -1367,7 +1367,7 @@
 
                 const link = document.createElement('a');
                 const timestamp = new Date().toISOString().slice(0, 10).replace(/-/g, '');
-                link.download = `sardina_tarot_${timestamp}.png`;
+                link.download = `바다의_조언_${timestamp}.png`;
                 link.href = canvas.toDataURL('image/png');
                 link.click();
             } catch (err) {
