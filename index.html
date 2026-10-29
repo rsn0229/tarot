@@ -1261,7 +1261,7 @@
             if (pickedCards.length !== 3) return;
             const names = pickedCards.map(c => c.title.split('(')[1].replace(')', '')).join(' · ');
             const advicePart = currentOneLineAdvice ? `"${currentOneLineAdvice}"\n\n` : '';
-            const text = `${advicePart}사르디나의 바다에서 [${names}] 세 장의 타로로 고민 상담을 받았습니다🌊\nhttps://tarot.sardina.love`;
+            const text = `${advicePart}사르디나의 바다에서 세 장의 타로로 고민 상담을 받았습니다🌊\nhttps://tarot.sardina.love`;
             
             const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
             window.open(url, '_blank');
