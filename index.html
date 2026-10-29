@@ -7,13 +7,13 @@
     
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://sardina-tarot.netlify.app/">
-    <meta property="og:title" content="Sardina Destiny Tarot">
-    <meta property="og:description" content="사르디나의 바다가 당신의 운명을 비춥니다. 마음이 가는 카드를 선택하세요.">
+    <meta property="og:title" content="Sardina Tarot">
+    <meta property="og:description" content="사르디나의 바다가 너를 비추고 있구나. 마음이 가는 카드를 골라보렴.">
     <meta property="og:image" content="https://sardina-tarot.netlify.app/assets/thumb.png">
 
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Sardina Destiny Tarot">
-    <meta name="twitter:description" content="사르디나의 바다가 당신의 운명을 비춥니다. 마음이 가는 카드를 선택하세요.">
+    <meta name="twitter:title" content="Sardina Tarot">
+    <meta name="twitter:description" content="사르디나의 바다가 너를 비추고 있구나. 마음이 가는 카드를 골라보렴.">
     <meta name="twitter:image" content="https://sardina-tarot.netlify.app/assets/thumb.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -40,7 +40,6 @@
             box-sizing: border-box;
         }
 
-        /* 모바일 화면 쏠림 및 가로 스크롤 원천 차단 */
         html, body {
             width: 100%;
             max-width: 100%;
@@ -108,19 +107,44 @@
         }
 
         p.subtitle {
-            margin: 0 0 12px 0;
+            margin: 0 0 8px 0;
             font-size: clamp(0.95rem, 3.8vw, 1.08rem);
-            opacity: 0.9;
+            opacity: 0.92;
             text-align: center;
             line-height: 1.45;
             word-break: keep-all;
             width: 100%;
         }
 
+        .arcana-notice {
+            margin: 0 0 12px 0;
+            padding: 6px 14px;
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px solid rgba(212, 175, 55, 0.35);
+            border-radius: 20px;
+            font-size: clamp(0.84rem, 3.4vw, 0.94rem);
+            color: rgba(248, 249, 250, 0.88);
+            text-align: center;
+            line-height: 1.45;
+            word-break: keep-all;
+            max-width: 100%;
+        }
+
+        .arcana-notice strong {
+            color: var(--gold);
+            font-weight: normal;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+        }
+
+        .mobile-br {
+            display: none;
+        }
+
         .visitor-count {
             font-size: 1rem;
             color: var(--gold);
-            margin-bottom: 18px;
+            margin-bottom: 16px;
             opacity: 0.95;
             text-align: center;
             width: 100%;
@@ -187,12 +211,6 @@
             width: 100%;
         }
 
-        /* 
-         * [핵심 수정] 
-         * 1. z-index: 30을 부여해 말풍선이 위쪽 안내 문구들보다 항상 위에 뜨도록 설정
-         * 2. overflow: hidden을 제거하고 overflow-x: clip만 사용하여 위쪽(Y축)으로는 말풍선이 절대 잘리지 않게 처리
-         * 3. 상단 패딩을 넉넉히 확보
-         */
         .spread-wrapper {
             width: 100vw;
             max-width: 900px;
@@ -245,11 +263,6 @@
             box-shadow: 0 0 15px rgba(212, 175, 55, 0.85);
         }
 
-        /* 
-         * [핵심 수정]
-         * 평소에는 display: none으로 완전히 숨겨두어 화면 가로폭에 1px도 영향을 주지 않게 하고,
-         * 카드를 눌렀을 때(.is-preview)만 나타나면서 3D 카드 면보다 앞쪽(translateZ)에 선명하게 뜨도록 개선
-         */
         .mobile-tap-tooltip {
             display: none;
             position: absolute;
@@ -295,7 +308,6 @@
             display: block;
         }
 
-        /* 양 끝 카드 선택 시 말풍선이 화면 좌우 밖으로 잘리지 않게 위치 보정 */
         .card.edge-left .mobile-tap-tooltip {
             left: -4px;
             transform: translateX(0) translateZ(20px);
@@ -658,10 +670,16 @@
             transform: translateY(-2px);
         }
 
-        /* 모바일 기기 최적화 (일반 스마트폰 ~ 소형 폴드 화면까지 대응) */
         @media (max-width: 600px) {
             body {
                 padding: 22px 14px 40px 14px;
+            }
+            .mobile-br {
+                display: inline;
+            }
+            .arcana-notice {
+                border-radius: 14px;
+                padding: 7px 12px;
             }
             .card {
                 width: 62px;
@@ -702,18 +720,21 @@
 <body>
 
     <h1 class="corinthia-bold">Sardina Destiny</h1>
-    <p class="subtitle">사르디나의 바다가 당신의 운명을 비춥니다.<br>고민을 적고 마음이 가는 세 장의 카드를 선택하세요.</p>
+    <p class="subtitle">사르디나의 바다가 네 마음을 비추고 있구나.<br>고민을 적고, 시선이 머무는 세 장의 카드를 골라보렴.</p>
     
+    <div class="arcana-notice">
+        ✦ 이곳에서는 22장의 <strong>메이저 아르카나</strong>를 사용해<br class="mobile-br"> 주요한 흐름만 읽어낸단다.
+    </div>
+
     <div class="visitor-count">
-        당신은 운명의 <span id="visitor-number">...</span> 번째 방문자군요!
+        네가 운명의 <span id="visitor-number">...</span> 번째 방문자구나?
     </div>
 
     <div id="worry-section">
-        <textarea id="worry-input" class="worry-input-box" placeholder="사르디나의 바다로 보내고 싶은 고민을 적어주세요... (예: 요즘 준비하는 일이 잘 풀릴까요?)"></textarea>
+        <textarea id="worry-input" class="worry-input-box" placeholder="무슨 일로 그리 고민에 잠긴 거니? (예: 요즘 준비하는 일이 잘 풀릴까요?)"></textarea>
     </div>
 
-    <div class="pick-guide" id="pick-guide">고민을 떠올리며 첫 번째(과거/원인) 카드를 뽑아주세요 (남은 카드: 3장)</div>
-    <div class="sub-touch-guide">💡모바일은 카드를 눌러 확인 후 한 번 더 누르면 뒤집힙니다.</div>
+    <div class="pick-guide" id="pick-guide">고민을 떠올리며 첫 번째(과거/원인) 카드를 골라보렴 (남은 카드: 3장)</div>
 
     <div class="spread-wrapper">
         <div class="card-spread" id="deck"></div>
@@ -745,17 +766,17 @@
             </div>
         </div>
 
-        <h2 id="card-title">🌊 사르디나 심해의 타로 리딩</h2>
+        <h2 id="card-title">🌊 닻의 타로 리딩</h2>
 
         <div class="loading-box" id="loading-box">
             <div class="spinner"></div>
-            <div>사르디나의 파도가 세 장의 운명을 읽고 있습니다...</div>
+            <div>네 카드의 흐름을 읽고 있으니, 잠시만 기다리렴...</div>
         </div>
 
         <p id="card-desc">리딩 내용...</p>
         
         <div id="one-line-summary" class="one-line-summary">
-            <span class="summary-badge">⚓ 사르디나의 한 줄 조언</span>
+            <span class="summary-badge">⚓ 한 줄 조언</span>
             <span id="summary-text"></span>
         </div>
         
@@ -763,13 +784,13 @@
             트위터에 결과 공유하기
         </button>
         
-        <button class="close-btn" onclick="closeAndShuffle()">조언 참고하기 ✨</button>
+        <button class="close-btn" onclick="closeAndShuffle()">조언 새겨듣기 ✨</button>
     </div>
 
     <div class="notice-backdrop" id="notice-backdrop" onclick="closeNoticeModal()"></div>
     <div id="notice-modal">
         <span class="notice-icon" id="notice-icon">🌊</span>
-        <div class="notice-title" id="notice-title">사르디나의 속삭임</div>
+        <div class="notice-title" id="notice-title">닻의 속삭임</div>
         <p class="notice-desc" id="notice-desc">안내 메시지</p>
         <button class="notice-btn" id="notice-btn" onclick="closeNoticeModal()">확인</button>
     </div>
@@ -833,7 +854,7 @@
             }
         };
 
-        function showNoticeModal({ icon = '🌊', title = '사르디나의 속삭임', message = '', btnText = '확인', onClose = null }) {
+        function showNoticeModal({ icon = '🌊', title = '닻의 속삭임', message = '', btnText = '확인', onClose = null }) {
             document.getElementById('notice-icon').innerText = icon;
             document.getElementById('notice-title').innerText = title;
             document.getElementById('notice-desc').innerText = message;
@@ -914,7 +935,7 @@
                 cardEl._cardData = cardData;
 
                 cardEl.innerHTML = `
-                    <div class="mobile-tap-tooltip">한 번 더 눌러 뒤집어주세요!</div>
+                    <div class="mobile-tap-tooltip">한 번 더 눌러 뒤집어보렴!</div>
                     <div class="card-face card-back"></div>
                     <div class="card-face card-front">
                         <img class="front-img" src="assets/${cardData.id}.jpg" alt="${cardData.title}" onerror="this.style.opacity='0'">
@@ -1054,8 +1075,8 @@
                 setPreviewCard(null);
                 showNoticeModal({
                     icon: '🌊',
-                    title: '고민을 먼저 들려주세요',
-                    message: '사르디나의 바다가 당신의 운명을 읽을 수 있도록,\n먼저 마음속 고민을 입력해 주세요.',
+                    title: '고민을 먼저 들려주렴',
+                    message: '무엇이 네 마음을 어지럽히는지 알려주어야\n바다도 답을 내어줄 수 있지 않겠니?\n먼저 고민부터 차분히 적어보렴.',
                     btnText: '고민 적으러 가기',
                     onClose: () => {
                         document.getElementById('worry-input').focus();
@@ -1120,9 +1141,9 @@
             const remain = 3 - pickedCards.length;
             if (remain > 0) {
                 const labels = ['첫 번째(과거/원인)', '두 번째(현재/상황)', '세 번째(미래/해답)'];
-                guide.innerText = `고민을 떠올리며 ${labels[pickedCards.length]} 카드를 뽑아주세요 (남은 카드: ${remain}장)`;
+                guide.innerText = `고민을 떠올리며 ${labels[pickedCards.length]} 카드를 골라보렴 (남은 카드: ${remain}장)`;
             } else {
-                guide.innerText = '세 장의 운명이 모두 선택되었습니다';
+                guide.innerText = '세 장 모두 골랐구나. 어디 결과를 볼까.';
             }
         }
 
@@ -1155,7 +1176,7 @@
                 document.getElementById(`mini-title-${i}`).innerText = c.title;
             });
 
-            document.getElementById('card-title').innerText = '🌊 사르디나 심해의 타로 리딩';
+            document.getElementById('card-title').innerText = '🌊 닻의 타로 리딩';
             document.getElementById('card-desc').style.display = 'none';
             document.getElementById('loading-box').style.display = 'block';
 
@@ -1202,8 +1223,8 @@
                     closeResultModalOnly();
                     showNoticeModal({
                         icon: '🌊',
-                        title: '파도가 거세어 응답이 늦어집니다',
-                        message: `심해의 목소리를 실어오지 못했어요.\n잠시 후 다시 카드를 뽑아 시도해 주세요.\n(${data.message || '응답 지연'})`,
+                        title: '파도가 거세어 응답이 늦어지는구나',
+                        message: `지금은 해류가 조금 거친 모양이야.\n잠시 숨을 고른 뒤에 다시 카드를 골라보렴.\n(${data.message || '응답 지연'})`,
                         btnText: '카드 다시 뽑기',
                         onClose: () => {
                             shuffleAndSpread();
@@ -1215,8 +1236,8 @@
                 closeResultModalOnly();
                 showNoticeModal({
                     icon: '⚓',
-                    title: '바다와의 연결이 잠시 흔들렸어요',
-                    message: '서버와 통신하는 중 파도가 일었습니다.\n잠시 후 다시 카드를 선택해 주세요!',
+                    title: '바다와의 연결이 잠시 흔들렸구나',
+                    message: '갑작스레 거센 파도가 일었는걸.\n잠시 후에 다시 카드를 골라보렴.',
                     btnText: '다시 시도하기',
                     onClose: () => {
                         shuffleAndSpread();
