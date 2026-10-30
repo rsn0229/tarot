@@ -861,7 +861,7 @@
         <textarea id="worry-input" class="worry-input-box" placeholder="무슨 일로 그리 고민에 잠긴 거니? (예: 요즘 준비하는 일이 잘 풀릴까요?)"></textarea>
     </div>
 
-    <div class="pick-guide" id="pick-guide">고민을 떠올리며 첫 번째(과거/원인) 카드를 골라보렴. (남은 카드: 3장)</div>
+    <div class="pick-guide" id="pick-guide">고민을 떠올리며 첫 번째 카드를 골라보렴. (남은 카드: 3장)</div>
 
     <div class="spread-wrapper">
         <!-- 세로로 길쭉하고 우아한 스와이프 가이드 화살표 -->
@@ -881,30 +881,24 @@
     </div>
 
     <div id="picked-slots">
-        <div class="slot-item" id="slot-0"><span class="slot-label">첫 번째 (과거/원인)</span><span class="slot-name">선택 대기</span></div>
-        <div class="slot-item" id="slot-1"><span class="slot-label">두 번째 (현재/상황)</span><span class="slot-name">선택 대기</span></div>
-        <div class="slot-item" id="slot-2"><span class="slot-label">세 번째 (미래/해답)</span><span class="slot-name">선택 대기</span></div>
+        <div class="slot-item" id="slot-0"><span class="slot-label">첫 번째 카드</span><span class="slot-name">선택 대기</span></div>
+        <div class="slot-item" id="slot-1"><span class="slot-label">두 번째 카드</span><span class="slot-name">선택 대기</span></div>
+        <div class="slot-item" id="slot-2"><span class="slot-label">세 번째 카드</span><span class="slot-name">선택 대기</span></div>
     </div>
 
     <div class="modal-backdrop" id="modal-backdrop"></div>
     <div id="result-modal">
-        <div id="three-cards-view">
-            <div class="mini-card-box">
-                <span class="pos-badge">과거 · 원인</span>
-                <img id="mini-img-0" src="" alt="Card 1" onerror="this.style.display='none'">
-                <div class="mini-title" id="mini-title-0"></div>
-            </div>
-            <div class="mini-card-box">
-                <span class="pos-badge">현재 · 상황</span>
-                <img id="mini-img-1" src="" alt="Card 2" onerror="this.style.display='none'">
-                <div class="mini-title" id="mini-title-1"></div>
-            </div>
-            <div class="mini-card-box">
-                <span class="pos-badge">미래 · 해답</span>
-                <img id="mini-img-2" src="" alt="Card 3" onerror="this.style.display='none'">
-                <div class="mini-title" id="mini-title-2"></div>
-            </div>
-        </div>
+    <div id="three-cards-view">
+    <div class="mini-card-box">
+        <img id="mini-img-0" src="" alt="Card 1" onerror="this.style.display='none'">
+    </div>
+    <div class="mini-card-box">
+        <img id="mini-img-1" src="" alt="Card 2" onerror="this.style.display='none'">
+    </div>
+    <div class="mini-card-box">
+        <img id="mini-img-2" src="" alt="Card 3" onerror="this.style.display='none'">
+    </div>
+</div>
 
         <h2 id="card-title">🌊 닻의 타로 리딩</h2>
 
@@ -1598,16 +1592,16 @@ function renderPCSpread(animateStagger = false) {
             }
         }
 
-        function updateGuideText() {
-            const guide = document.getElementById('pick-guide');
-            const remain = 3 - pickedCards.length;
-            if (remain > 0) {
-                const labels = ['첫 번째(과거/원인)', '두 번째(현재/상황)', '세 번째(미래/해답)'];
-                guide.innerText = `고민을 떠올리며 ${labels[pickedCards.length]} 카드를 골라보렴 (남은 카드: ${remain}장)`;
-            } else {
-                guide.innerText = '세 장 모두 골랐구나. 어디 결과를 볼까.';
-            }
-        }
+function updateGuideText() {
+    const guide = document.getElementById('pick-guide');
+    const remain = 3 - pickedCards.length;
+    if (remain > 0) {
+        const labels = ['첫 번째', '두 번째', '세 번째'];
+        guide.innerText = `고민을 떠올리며 ${labels[pickedCards.length]} 카드를 골라보렴. (남은 카드: ${remain}장)`;
+    } else {
+        guide.innerText = '세 장 모두 골랐구나. 어디 결과를 볼까.';
+    }
+}
 
         function updateSlotUI(slotIdx, cardData) {
             const slot = document.getElementById(`slot-${slotIdx}`);
@@ -1632,12 +1626,11 @@ async function showCounselModal(cards) {
     currentOneLineAdvice = "";
     isEasterEggMode = false;
 
-            cards.forEach((c, i) => {
-                const mImg = document.getElementById(`mini-img-${i}`);
-                mImg.style.display = 'block';
-                mImg.src = `assets/${c.id}.jpg`;
-                document.getElementById(`mini-title-${i}`).innerText = c.title;
-            });
+    cards.forEach((c, i) => {
+        const mImg = document.getElementById(`mini-img-${i}`);
+        mImg.style.display = 'block';
+        mImg.src = `assets/${c.id}.jpg`;
+    });
 
             document.getElementById('card-title').innerText = '🌊 닻의 타로 리딩';
             document.getElementById('card-desc').style.display = 'none';
