@@ -1041,6 +1041,7 @@
         let pickedCards = []; 
         let previewCardEl = null;  
         let currentOneLineAdvice = ""; 
+        let isEasterEggMode = false;
         let noticeCloseCallback = null;
         let cardElements = [];
 
@@ -1625,10 +1626,11 @@
             }
         }
 
-        async function showCounselModal(cards) {
-            document.getElementById('three-cards-view').style.display = 'flex';
-            document.getElementById('one-line-summary').style.display = 'none';
-            currentOneLineAdvice = "";
+async function showCounselModal(cards) {
+    document.getElementById('three-cards-view').style.display = 'flex';
+    document.getElementById('one-line-summary').style.display = 'none';
+    currentOneLineAdvice = "";
+    isEasterEggMode = false;
 
             cards.forEach((c, i) => {
                 const mImg = document.getElementById(`mini-img-${i}`);
@@ -1664,14 +1666,15 @@
                     let mainReading = rawText;
                     let summaryAdvice = data.summary || "";
 
-                    const match = rawText.match(/\[한줄조언\]\s*:?\s*(.+)/);
-                    if (match) {
-                        summaryAdvice = match[1].trim();
-                        mainReading = rawText.replace(match[0], '').trim();
-                    } else if (!summaryAdvice) {
-                        const sentences = mainReading.split(/(?<=[.!?])\s+/);
-                        summaryAdvice = sentences[sentences.length - 1];
-                    }
+const match = rawText.match(/\[(한줄조언|한줄담소)\]\s*:?\s*(.+)/);
+if (match) {
+    isEasterEggMode = (match[1] === '한줄담소'); 
+    summaryAdvice = match[2].trim();
+    mainReading = rawText.replace(match[0], '').trim();
+} else if (!summaryAdvice) {
+    const sentences = mainReading.split(/(?<=[.!?])\s+/);
+    summaryAdvice = sentences[sentences.length - 1];
+}
 
                     document.getElementById('card-desc').innerText = mainReading;
 
@@ -1776,14 +1779,18 @@
             }
         }
 
-        function shareTwitter() {
-            if (pickedCards.length !== 3) return;
-            const advicePart = currentOneLineAdvice ? `"${currentOneLineAdvice}"\n\n` : '';
-            const text = `${advicePart}사르디나의 바다에서 세 장의 카드로 고민 상담을 받았습니다🌊\nhttps://tarot.sardina.love`;
-            
-            const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
-            window.open(url, '_blank');
-        }
+function shareTwitter() {
+    if (pickedCards.length !== 3) return;
+    const advicePart = currentOneLineAdvice ? `"${currentOneLineAdvice}"\n\n` : '';
+    const shareMessage = isEasterEggMode
+        ? '사르디나의 바다에서 담소를 나누었습니다🌊'
+        : '사르디나의 바다에서 고민 상담을 받았습니다🌊';
+
+    const text = `${advicePart}${shareMessage}\nhttps://tarot.sardina.love`;
+    
+    const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
+    window.open(url, '_blank');
+}
     </script>
 </body>
 </html>
