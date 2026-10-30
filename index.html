@@ -1384,14 +1384,14 @@
             inertiaRafId = requestAnimationFrame(step);
         }
 
-        function renderPCSpread(animateStagger = false) {
-            const deck = document.getElementById('deck');
-            const total = cardElements.length;
-            if (!deck || total === 0) return;
+function renderPCSpread(animateStagger = false) {
+    const deck = document.getElementById('deck');
+    const total = cardElements.length;
+    if (!deck || total === 0) return;
 
-            const containerWidth = deck.clientWidth;
-            const firstCardWidth = cardElements[0].offsetWidth || 72;
-            const usableWidth = Math.max(containerWidth - firstCardWidth - 24, 320);
+    const containerWidth = deck.clientWidth;
+    const firstCardWidth = cardElements[0].offsetWidth || 72;
+    const usableWidth = Math.min(Math.max(containerWidth - firstCardWidth - 40, 320), 660);
 
             const halfTotal = Math.ceil(total / 2); 
 
