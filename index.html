@@ -1129,29 +1129,45 @@
             }
         }
 
-        async function fetchVisitorCount() {
-            const countSpan = document.getElementById('visitor-number');
-            if (GAS_WEB_APP_URL.startsWith('https://script.google.com')) {
-                try {
-                    const res = await fetch(GAS_WEB_APP_URL);
-                    const data = await res.json();
-                    if (data && data.count) {
-                        countSpan.innerText = data.count.toLocaleString();
-                        return;
-                    }
-                } catch (e) {
-                    console.log('GAS 카운터 연결 대기 중...');
-                }
-            }
-            try {
-                const res = await fetch('https://api.counterapi.dev/v1/sardina_destiny/tarot_event/up');
-                const data = await res.json();
-                countSpan.innerText = data.count ? data.count.toLocaleString() : '특별한';
-            } catch (e) {
-                countSpan.innerText = '특별한';
-            }
-        }
+async function fetchVisitorCount() {
+    const countSpan = document.getElementById('visitor-number');
+    const COOLDOWN_MS = 60 * 1000; 
+    const now = Date.now();
 
+    const lastVisitTime = parseInt(localStorage.getItem('sardina_last_visit_ts') || '0', 10);
+    const cachedCount = localStorage.getItem('sardina_cached_count');
+
+    if (cachedCount && (now - lastVisitTime < COOLDOWN_MS)) {
+        countSpan.innerText = cachedCount;
+        return;
+    }
+
+    if (GAS_WEB_APP_URL.startsWith('https://script.google.com')) {
+        try {
+            const res = await fetch(GAS_WEB_APP_URL);
+            const data = await res.json();
+            if (data && data.count) {
+                const formatted = data.count.toLocaleString();
+                countSpan.innerText = formatted;
+                localStorage.setItem('sardina_last_visit_ts', now.toString());
+                localStorage.setItem('sardina_cached_count', formatted);
+                return;
+            }
+        } catch (e) {
+            console.log('GAS 카운터 연결 대기 중...');
+        }
+    }
+    try {
+        const res = await fetch('https://api.counterapi.dev/v1/sardina_destiny/tarot_event/up');
+        const data = await res.json();
+        const formatted = data.count ? data.count.toLocaleString() : '특별한';
+        countSpan.innerText = formatted;
+        localStorage.setItem('sardina_last_visit_ts', now.toString());
+        localStorage.setItem('sardina_cached_count', formatted);
+    } catch (e) {
+        countSpan.innerText = cachedCount || '특별한';
+    }
+}
         function getShuffledDeck() {
             const arr = [...tarotData];
             for (let i = arr.length - 1; i > 0; i--) {
