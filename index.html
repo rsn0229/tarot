@@ -926,11 +926,11 @@
         </div>
 
         <p id="card-desc">리딩 내용...</p>
-        
-        <div id="one-line-summary" class="one-line-summary">
-            <span class="summary-badge">⚓ 한 줄 조언</span>
-            <span id="summary-text"></span>
-        </div>
+
+<div id="one-line-summary" class="one-line-summary">
+    <span class="summary-badge" id="summary-badge">⚓ 한 줄 조언</span>
+    <span id="summary-text"></span>
+</div>
         
         <button class="twitter-share-btn" id="twitter-btn" onclick="shareTwitter()">
             트위터에 결과 공유하기
@@ -1679,11 +1679,12 @@ const tarotData = [
             };
         }
 
+        // 🛠️ [HTML 수정 2] showCounselModal 함수 교체 (배지 텍스트 및 모드 자동 판별)
         async function showCounselModal(cards) {
             document.getElementById('three-cards-view').style.display = 'flex';
             document.getElementById('one-line-summary').style.display = 'none';
             currentOneLineAdvice = "";
-            isEasterEggMode = false;
+            currentReadingMode = "counsel"; // 기본값: 일반 고민 상담
 
             cards.forEach((c, i) => {
                 const mImg = document.getElementById(`mini-img-${i}`);
@@ -1719,21 +1720,44 @@ const tarotData = [
                     const rawText = data.reading || "";
                     let mainReading = rawText;
                     let summaryAdvice = data.summary || "";
+                    let badgeTitle = "⚓ 한 줄 조언";
 
-                    const match = rawText.match(/\[(한줄조언|한줄담소)\]\s*:?\s*(.+)/);
+                    const match = rawText.match(/\[(한줄조언|한줄담소|한줄요약|닻과\s*파도)\]\s*:?\s*(.+)/);
                     if (match) {
-                        isEasterEggMode = (match[1] === '한줄담소'); 
+                        const tagType = match[1].replace(/\s+/g, '');
                         summaryAdvice = match[2].trim();
                         mainReading = rawText.replace(match[0], '').trim();
-                    } else if (!summaryAdvice) {
-                        const sentences = mainReading.split(/(?<=[.!?])\s+/);
-                        summaryAdvice = sentences[sentences.length - 1];
+
+                        if (worryText.includes('⚓') || tagType === '닻과파도') {
+                            currentReadingMode = 'rosamaya';
+                            badgeTitle = '⚓ 닻과 파도';
+                        } else if (tagType === '한줄요약') {
+                            currentReadingMode = 'story';
+                            badgeTitle = '⚓ 한 줄 요약';
+                        } else if (tagType === '한줄담소') {
+                            currentReadingMode = 'chat';
+                            badgeTitle = '⚓ 한 줄 조언';
+                        } else {
+                            currentReadingMode = 'counsel';
+                            badgeTitle = '⚓ 한 줄 조언';
+                        }
+                    } else {
+                        if (worryText.includes('⚓')) {
+                            currentReadingMode = 'rosamaya';
+                            badgeTitle = '⚓ 닻과 파도';
+                        }
+                        if (!summaryAdvice) {
+                            const sentences = mainReading.split(/(?<=[.!?])\s+/);
+                            summaryAdvice = sentences[sentences.length - 1];
+                        }
                     }
 
                     document.getElementById('card-desc').innerText = mainReading;
 
                     if (summaryAdvice) {
                         currentOneLineAdvice = summaryAdvice;
+                        const badgeEl = document.getElementById('summary-badge');
+                        if (badgeEl) badgeEl.innerText = badgeTitle;
                         document.getElementById('summary-text').innerText = `"${summaryAdvice}"`;
                         document.getElementById('one-line-summary').style.display = 'block';
                     }
@@ -1763,7 +1787,6 @@ const tarotData = [
                 });
             }
         }
-
         function openModal() {
             document.getElementById('modal-backdrop').style.display = 'block';
             document.getElementById('result-modal').style.display = 'block';
@@ -1836,9 +1859,13 @@ const tarotData = [
         function shareTwitter() {
             if (pickedCards.length !== 3) return;
             const advicePart = currentOneLineAdvice ? `"${currentOneLineAdvice}"\n\n` : '';
-            const shareMessage = isEasterEggMode
-                ? '사르디나의 바다에서 담소를 나누었습니다🌊'
-                : '사르디나의 바다에서 고민 상담을 받았습니다🌊';
+            
+            let shareMessage = '사르디나의 바다에서 고민 상담을 받았습니다🌊';
+            if (currentReadingMode === 'rosamaya' || currentReadingMode === 'story') {
+                shareMessage = '사르디나의 바다에서 이야기가 밀려왔습니다🌊';
+            } else if (currentReadingMode === 'chat') {
+                shareMessage = '사르디나의 바다에서 담소를 나누었습니다🌊';
+            }
 
             const text = `${advicePart}${shareMessage}\nhttps://tarot.sardina.love`;
             
