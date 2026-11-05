@@ -611,20 +611,36 @@
             white-space: pre-line;
         }
 
+        .notice-btn-group {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+        }
+
         .notice-btn {
+            flex: 1;
             background: linear-gradient(135deg, #d4af37 0%, #b58d22 100%);
             color: #001a33;
             border: none;
-            padding: 10px 24px;
+            padding: 10px 14px;
             border-radius: 25px;
             cursor: pointer;
             font-family: 'KyoboHandwriting2020ParkDoYeon', sans-serif;
-            font-size: 1.05rem;
+            font-size: 1.02rem;
             font-weight: normal;
             width: 100%;
             max-width: 200px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
             transition: transform 0.2s, filter 0.2s;
+            white-space: nowrap;
+        }
+
+        .notice-btn.secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--white);
+            border: 1px solid rgba(212, 175, 55, 0.6);
         }
 
         .notice-btn:hover {
@@ -947,7 +963,10 @@
         <span class="notice-icon" id="notice-icon">🌊</span>
         <div class="notice-title" id="notice-title">닻의 속삭임</div>
         <p class="notice-desc" id="notice-desc">안내 메시지</p>
-        <button class="notice-btn" id="notice-btn" onclick="closeNoticeModal()">확인</button>
+        <div class="notice-btn-group">
+            <button class="notice-btn" id="notice-btn" onclick="closeNoticeModal()">확인</button>
+            <button class="notice-btn secondary" id="notice-sub-btn" style="display: none;" onclick="closeNoticeSubModal()">돌아가기</button>
+        </div>
     </div>
 
     <script>
@@ -1128,12 +1147,26 @@ const tarotData = [
             }
         };
 
-        function showNoticeModal({ icon = '🌊', title = '닻의 속삭임', message = '', btnText = '확인', onClose = null }) {
+        let noticeSubCallback = null;
+
+        function showNoticeModal({ icon = '🌊', title = '닻의 속삭임', message = '', btnText = '확인', onClose = null, subBtnText = null, onSubClose = null }) {
             document.getElementById('notice-icon').innerText = icon;
             document.getElementById('notice-title').innerText = title;
             document.getElementById('notice-desc').innerText = message;
-            document.getElementById('notice-btn').innerText = btnText;
+
+            const mainBtn = document.getElementById('notice-btn');
+            const subBtn = document.getElementById('notice-sub-btn');
+
+            mainBtn.innerText = btnText;
             noticeCloseCallback = onClose;
+            noticeSubCallback = onSubClose;
+
+            if (subBtnText) {
+                subBtn.innerText = subBtnText;
+                subBtn.style.display = 'block';
+            } else {
+                subBtn.style.display = 'none';
+            }
 
             document.getElementById('notice-backdrop').style.display = 'block';
             document.getElementById('notice-modal').style.display = 'block';
@@ -1142,9 +1175,21 @@ const tarotData = [
         function closeNoticeModal() {
             document.getElementById('notice-backdrop').style.display = 'none';
             document.getElementById('notice-modal').style.display = 'none';
+            noticeSubCallback = null;
             if (typeof noticeCloseCallback === 'function') {
                 const cb = noticeCloseCallback;
                 noticeCloseCallback = null;
+                cb();
+            }
+        }
+
+        function closeNoticeSubModal() {
+            document.getElementById('notice-backdrop').style.display = 'none';
+            document.getElementById('notice-modal').style.display = 'none';
+            noticeCloseCallback = null;
+            if (typeof noticeSubCallback === 'function') {
+                const cb = noticeSubCallback;
+                noticeSubCallback = null;
                 cb();
             }
         }
@@ -1680,12 +1725,11 @@ const tarotData = [
             };
         }
 
-        // 🛠️ [HTML 수정 2] showCounselModal 함수 교체 (배지 텍스트 및 모드 자동 판별)
         async function showCounselModal(cards) {
             document.getElementById('three-cards-view').style.display = 'flex';
             document.getElementById('one-line-summary').style.display = 'none';
             currentOneLineAdvice = "";
-            currentReadingMode = "counsel"; // 기본값: 일반 고민 상담
+            currentReadingMode = "counsel";
 
             cards.forEach((c, i) => {
                 const mImg = document.getElementById(`mini-img-${i}`);
@@ -1716,9 +1760,9 @@ const tarotData = [
                 const data = await response.json();
                 document.getElementById('loading-box').style.display = 'none';
 
-                if (data.status === 'success') {
+                if (data.status === 'success' && data.reading) {
                     document.getElementById('card-desc').style.display = 'block';
-                    const rawText = data.reading || "";
+                    const rawText = (data.reading || "").replace(/\s*\[끝\]\s*$/g, '').replace(/\[끝\]/g, '').trim();
                     let mainReading = rawText;
                     let summaryAdvice = data.summary || "";
                     let badgeTitle = "⚓ 한 줄 조언";
@@ -1767,10 +1811,14 @@ const tarotData = [
                     showNoticeModal({
                         icon: '🌊',
                         title: '파도가 거세어 응답이 늦어지는구나',
-                        message: `지금은 해류가 조금 거친 모양이야.\n잠시 숨을 고른 뒤에 다시 카드를 골라보렴.\n(${data.message || '응답 지연'})`,
-                        btnText: '카드 다시 뽑기',
+                        message: '해류가 조금 거친 모양이야.\n잠시 뒤에 다시 시도해 보렴.',
+                        btnText: '다시 시도하기',
                         onClose: () => {
-                            shuffleAndSpread();
+                            showCounselModal(cards);
+                        },
+                        subBtnText: '돌아가기',
+                        onSubClose: () => {
+                            closeAndShuffle();
                         }
                     });
                 }
@@ -1778,16 +1826,21 @@ const tarotData = [
                 document.getElementById('loading-box').style.display = 'none';
                 closeResultModalOnly();
                 showNoticeModal({
-                    icon: '⚓',
-                    title: '연결이 잠시 흔들렸구나',
-                    message: '갑작스레 거센 파도가 일었는걸.\n잠시 후에 다시 카드를 골라보렴.',
+                    icon: '🌊',
+                    title: '파도가 거세어 응답이 늦어지는구나',
+                    message: '해류가 조금 거친 모양이야.\n잠시 뒤에 다시 시도해 보렴.',
                     btnText: '다시 시도하기',
                     onClose: () => {
-                        shuffleAndSpread();
+                        showCounselModal(cards); 
+                    },
+                    subBtnText: '돌아가기',
+                    onSubClose: () => {
+                        closeAndShuffle();
                     }
                 });
             }
         }
+        
         function openModal() {
             document.getElementById('modal-backdrop').style.display = 'block';
             document.getElementById('result-modal').style.display = 'block';
